@@ -1,4 +1,4 @@
-# Personal Portal & Live Clock
+# 陳沐德 - Personal Portal & Live Clock
 
 A sleek, responsive personal dashboard featuring real-time clock updates, time-of-day greetings, customizable identity, and multi-theme support with glassmorphism aesthetics.
 

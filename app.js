@@ -88,21 +88,25 @@
   }
 
   function updateGreeting(hours, name) {
-    const firstName = name.trim().split(' ')[0] || 'there';
+    const isChinese = /[\u4e00-\u9fa5]/.test(name);
+    let displayName = name.trim();
+    if (!isChinese) {
+      displayName = displayName.split(' ')[0] || 'there';
+    }
     let greeting = '';
     let icon = '✨';
 
     if (hours >= 5 && hours < 12) {
-      greeting = `Good morning, ${firstName}`;
+      greeting = isChinese ? `早安，${displayName}` : `Good morning, ${displayName}`;
       icon = '🌅';
     } else if (hours >= 12 && hours < 17) {
-      greeting = `Good afternoon, ${firstName}`;
+      greeting = isChinese ? `午安，${displayName}` : `Good afternoon, ${displayName}`;
       icon = '☀️';
     } else if (hours >= 17 && hours < 21) {
-      greeting = `Good evening, ${firstName}`;
+      greeting = isChinese ? `晚上好，${displayName}` : `Good evening, ${displayName}`;
       icon = '🌆';
     } else {
-      greeting = `Hello, night owl ${firstName}`;
+      greeting = isChinese ? `夜深了，${displayName}` : `Hello, night owl ${displayName}`;
       icon = '🌙';
     }
 
@@ -151,7 +155,24 @@
   // --- Identity & Monogram ---
 
   function updateMonogram(name) {
-    const parts = name.trim().split(/\s+/);
+    const trimmed = name.trim();
+    if (!trimmed) {
+      elements.avatarMonogram.textContent = 'U';
+      return;
+    }
+    const isChinese = /[\u4e00-\u9fa5]/.test(trimmed);
+    if (isChinese) {
+      if (trimmed.length === 3) {
+        elements.avatarMonogram.textContent = trimmed.substring(1); // '沐德'
+      } else if (trimmed.length <= 2) {
+        elements.avatarMonogram.textContent = trimmed;
+      } else {
+        elements.avatarMonogram.textContent = trimmed.substring(0, 2);
+      }
+      return;
+    }
+
+    const parts = trimmed.split(/\s+/);
     let initials = 'U';
     if (parts.length >= 2) {
       initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -162,7 +183,11 @@
   }
 
   function loadIdentity() {
-    const savedName = localStorage.getItem(STORAGE_KEYS.NAME) || 'Alex Morgan';
+    let savedName = localStorage.getItem(STORAGE_KEYS.NAME);
+    if (!savedName || savedName === 'Alex Morgan') {
+      savedName = '陳沐德';
+      localStorage.setItem(STORAGE_KEYS.NAME, '陳沐德');
+    }
     const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE) || 'Innovator & Digital Explorer';
     const savedFocus = localStorage.getItem(STORAGE_KEYS.FOCUS) || '"Make each moment of the day count."';
 
@@ -203,7 +228,7 @@
   }
 
   function saveIdentity() {
-    const newName = elements.inputName.value.trim() || 'Alex Morgan';
+    const newName = elements.inputName.value.trim() || '陳沐德';
     const newRole = elements.inputRole.value.trim() || 'Innovator & Digital Explorer';
 
     localStorage.setItem(STORAGE_KEYS.NAME, newName);
