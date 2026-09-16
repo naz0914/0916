@@ -1,198 +1,324 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personal Portal | Live Clock & Dashboard</title>
-  <meta name="description" content="Personal profile dashboard displaying live real-time clock, personalized greeting, and interactive status widgets.">
+  <title>陳沐德 (德哥) | 個人檔案 & 即時時鐘儀表板</title>
+  <meta name="description" content="陳沐德 (德哥) - 國立中興大學生醫工程研究所碩士班。專長數位 IC 設計、生醫感測器開發與機器學習應用。">
+  <!-- Google Fonts: Noto Sans TC, Outfit, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
-<body data-theme="obsidian">
-  <!-- Dynamic ambient background orbs -->
-  <div class="ambient-glow orb-1"></div>
-  <div class="ambient-glow orb-2"></div>
-  <div class="ambient-glow orb-3"></div>
+<body data-theme="biotech-dark">
+  <!-- Ambient glowing gradient background orbs (深邃夜空藍 + 湖水綠漸層) -->
+  <div class="ambient-glow orb-space"></div>
+  <div class="ambient-glow orb-lake"></div>
+  <div class="ambient-glow orb-cyan"></div>
 
-  <div class="app-container">
+  <div class="page-container">
     <!-- Top Bar Controls -->
-    <header class="top-nav">
+    <header class="top-nav glass-panel">
       <div class="brand-badge">
         <span class="pulse-dot"></span>
-        <span id="system-status">System Online</span>
+        <span id="system-status">System Online • NCHU BME</span>
       </div>
+
+      <nav class="nav-links">
+        <a href="#profile-section" class="nav-link">個人檔案</a>
+        <a href="#skills-section" class="nav-link">專業技能</a>
+        <a href="#projects-section" class="nav-link">精選專案</a>
+      </nav>
 
       <div class="nav-actions">
         <!-- 12h/24h Toggle -->
-        <button id="time-format-toggle" class="glass-btn btn-pill" title="Toggle 12h/24h Time Format" aria-label="Toggle 12/24 hour format">
+        <button id="time-format-toggle" class="glass-btn btn-pill" title="切換 12/24 小時制" aria-label="Toggle 12/24 hour format">
           <span class="btn-icon">⏱</span>
           <span id="format-label">24H</span>
         </button>
 
-        <!-- Theme Switcher Dropdown / Pills -->
+        <!-- Theme Dots -->
         <div class="theme-selector" id="theme-selector">
-          <button class="theme-dot active" data-theme-name="obsidian" title="Obsidian Glow" aria-label="Obsidian Theme"></button>
-          <button class="theme-dot" data-theme-name="cyber" title="Cyber Violet" aria-label="Cyber Theme"></button>
-          <button class="theme-dot" data-theme-name="aurora" title="Aurora Emerald" aria-label="Aurora Theme"></button>
-          <button class="theme-dot" data-theme-name="sunset" title="Twilight Sunset" aria-label="Sunset Theme"></button>
+          <button class="theme-dot active" data-theme-name="biotech-dark" title="夜空藍 × 湖水綠 (預設)" aria-label="Biotech Dark Theme"></button>
+          <button class="theme-dot" data-theme-name="cyber-neon" title="極客紫 × 科技青" aria-label="Cyber Neon Theme"></button>
+          <button class="theme-dot" data-theme-name="aurora-emerald" title="極光翡翠" aria-label="Aurora Emerald Theme"></button>
         </div>
       </div>
     </header>
 
-    <!-- Main Glass Card Container -->
-    <main class="portal-card">
+    <!-- Hero Section: 4. Live Clock (即時時鐘) -->
+    <section class="clock-hero-card glass-panel" aria-label="即時系統時鐘">
+      <div class="clock-header">
+        <span id="greeting-icon" class="greeting-icon">🌅</span>
+        <span id="greeting-text" class="greeting-text">早安，陳沐德 (德哥)</span>
+      </div>
+
+      <div class="time-display-wrapper">
+        <div class="clock-digits" id="clock-time">00 : 00 : 00</div>
+        <span class="clock-meridiem" id="clock-meridiem">AM</span>
+      </div>
+
+      <div class="date-timezone-bar">
+        <div class="meta-chip">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span id="current-date">載入日期中...</span>
+        </div>
+
+        <div class="meta-chip" id="timezone-chip">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span id="current-timezone">UTC+08:00 (Taipei)</span>
+        </div>
+
+        <button class="meta-chip copy-btn" id="copy-time-btn" title="複製目前時間">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="copy-btn-text">複製時間</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
       
-      <!-- Profile & Identity Section -->
-      <section class="profile-section">
-        <div class="avatar-wrapper">
-          <div class="avatar-ring"></div>
-          <div class="avatar" id="avatar-monogram">沐德</div>
-        </div>
-
-        <div class="profile-info">
-          <div class="name-container">
-            <h1 id="user-name" class="user-name" title="Click to edit name">陳沐德</h1>
-            <button id="edit-name-btn" class="icon-btn" title="Edit your name" aria-label="Edit name">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-            </button>
+      <!-- 1. Profile (個人檔案) -->
+      <section id="profile-section" class="profile-card glass-panel">
+        <div class="profile-top">
+          <div class="avatar-container">
+            <div class="avatar-ring"></div>
+            <div class="avatar-core" id="avatar-monogram">沐德</div>
           </div>
 
-          <div class="bio-container">
-            <span id="user-role" class="user-role" title="Click to edit role">Innovator & Digital Explorer</span>
-            <button id="edit-role-btn" class="icon-btn mini" title="Edit role" aria-label="Edit role">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 20h9"></path>
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-              </svg>
-            </button>
+          <div class="profile-meta">
+            <div class="name-row">
+              <h1 class="user-name">陳沐德 <span class="nickname">(德哥)</span></h1>
+              <div class="status-badge" id="status-pill" title="點擊切換狀態" tabindex="0">
+                <span class="status-dot"></span>
+                <span id="status-text">探索生醫晶片 × AI 醫療</span>
+              </div>
+            </div>
+
+            <div class="academic-row">
+              <span class="edu-icon">🎓</span>
+              <span class="institution-text"><strong>國立中興大學</strong> 生醫工程研究所 碩士班</span>
+            </div>
+
+            <!-- 專長標籤 -->
+            <div class="specialty-tags">
+              <span class="spec-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                數位 IC 設計
+              </span>
+              <span class="spec-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                生醫感測器開發
+              </span>
+              <span class="spec-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>
+                機器學習應用
+              </span>
+            </div>
           </div>
-
-          <div class="status-pill" id="status-pill" role="button" tabindex="0" title="Click to cycle status">
-            <span class="status-indicator"></span>
-            <span id="status-text">Creating something amazing</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Real-Time Clock Display Section -->
-      <section class="clock-section" aria-label="Current Time and Date">
-        <div class="greeting-banner">
-          <span id="greeting-icon" class="greeting-icon">✨</span>
-          <span id="greeting-text">早安，陳沐德</span>
         </div>
 
-        <div class="time-display-wrapper">
-          <div class="clock-digits" id="clock-time">00:00:00</div>
-          <div class="clock-meridiem" id="clock-meridiem">AM</div>
+        <!-- 簡短自我介紹 -->
+        <div class="bio-quote-box">
+          <div class="quote-mark">“</div>
+          <p class="bio-content">
+            具備數位 IC 設計與 EDA 工具背景，目前專注於結合硬體開發與人工智慧，探索非侵入式醫療檢測（如唾液葡萄糖與呼氣 VOCs 分析）的創新應用。
+          </p>
         </div>
 
-        <div class="date-timezone-bar">
-          <div class="date-chip">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
+        <!-- 快速連結列 -->
+        <div class="profile-actions">
+          <a href="https://github.com/naz0914/0916" target="_blank" rel="noopener noreferrer" class="action-btn primary" id="link-github">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
             </svg>
-            <span id="current-date">Loading date...</span>
-          </div>
+            <span>GitHub Repository</span>
+          </a>
 
-          <div class="timezone-chip" id="timezone-chip" title="Local Timezone">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          <a href="https://github.com/naz0914/0916#readme" target="_blank" rel="noopener noreferrer" class="action-btn" id="link-readme">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
             </svg>
-            <span id="current-timezone">UTC+00:00</span>
+            <span>README.md</span>
+          </a>
+
+          <a href="mailto:hello@example.com" class="action-btn" id="link-contact">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>聯絡我 (Email)</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- 2. Skills (專業技能) -->
+      <section id="skills-section" class="skills-card glass-panel">
+        <div class="section-title-bar">
+          <div class="title-with-icon">
+            <span class="sec-icon">🛠</span>
+            <h2>專業技能 (Skills)</h2>
+          </div>
+          <span class="sub-badge">Core Competencies</span>
+        </div>
+
+        <div class="skills-grid">
+          <!-- 程式與開發 -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <span class="cat-icon">💻</span>
+              <h3>程式與開發</h3>
+            </div>
+            <div class="skill-tags-wrapper">
+              <span class="skill-pill highlight">Python</span>
+              <span class="skill-pill">PyTorch</span>
+              <span class="skill-pill">NumPy</span>
+              <span class="skill-pill">Docker</span>
+              <span class="skill-pill">Git</span>
+            </div>
+          </div>
+
+          <!-- 硬體與 IC 設計 -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <span class="cat-icon">⚡</span>
+              <h3>硬體與 IC 設計</h3>
+            </div>
+            <div class="skill-tags-wrapper">
+              <span class="skill-pill highlight">Synopsys Verdi</span>
+              <span class="skill-pill highlight">Design Compiler</span>
+              <span class="skill-pill">VCS</span>
+              <span class="skill-pill">數位 IC 設計流程</span>
+            </div>
+          </div>
+
+          <!-- 人工智慧 -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <span class="cat-icon">🧠</span>
+              <h3>人工智慧 (AI)</h3>
+            </div>
+            <div class="skill-tags-wrapper">
+              <span class="skill-pill highlight">Machine Learning</span>
+              <span class="skill-pill highlight">kNN 演算法</span>
+              <span class="skill-pill">特徵萃取與分類</span>
+              <span class="skill-pill">感測數據預處理</span>
+            </div>
+          </div>
+
+          <!-- 生醫檢測技術 -->
+          <div class="skill-category-card">
+            <div class="skill-cat-header">
+              <span class="cat-icon">🔬</span>
+              <h3>生醫檢測技術</h3>
+            </div>
+            <div class="skill-tags-wrapper">
+              <span class="skill-pill highlight">EIS (電化學阻抗頻譜)</span>
+              <span class="skill-pill highlight">IDE (交錯式微電極)</span>
+              <span class="skill-pill">金屬氧化物感測陣列</span>
+              <span class="skill-pill">非侵入式生醫量測</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Interactive Focus & Quick Actions -->
-      <section class="interactive-grid">
-        <div class="grid-card focus-card">
-          <div class="card-header">
-            <span class="card-icon">🎯</span>
-            <h3>Daily Focus</h3>
+      <!-- 3. Projects (作品與專案) -->
+      <section id="projects-section" class="projects-card glass-panel">
+        <div class="section-title-bar">
+          <div class="title-with-icon">
+            <span class="sec-icon">🚀</span>
+            <h2>精選專案 (Featured Projects)</h2>
           </div>
-          <p id="focus-text" class="editable-focus" title="Click to edit focus note">"Make each moment of the day count."</p>
+          <span class="sub-badge">Engineering & Innovations</span>
         </div>
 
-        <div class="grid-card links-card">
-          <div class="card-header">
-            <span class="card-icon">⚡</span>
-            <h3>Quick Links</h3>
+        <div class="projects-container">
+          <!-- Project 1 -->
+          <div class="project-item-card">
+            <div class="project-header">
+              <div class="project-title-group">
+                <span class="project-badge cyan">生醫感測 × AI 演算法</span>
+                <h3>機器學習輔助呼氣 VOCs 檢測系統</h3>
+              </div>
+              <a href="https://github.com/naz0914/0916" target="_blank" rel="noopener noreferrer" class="proj-link-icon" title="查看專案 Repo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            </div>
+
+            <p class="project-desc">
+              開發基於金屬氧化物感測器陣列的呼氣檢測系統，並利用 <strong>kNN 演算法</strong> 進行特徵分析與揮發性有機物 (VOCs) 識別，輔助非侵入式疾病診斷與早期健康監測。
+            </p>
+
+            <div class="project-tech-bar">
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">kNN Algorithm</span>
+              <span class="tech-tag">Sensor Data Analysis</span>
+              <span class="tech-tag">MOS Sensors</span>
+            </div>
           </div>
-          <div class="links-list">
-            <a href="https://github.com/naz0914/0916" target="_blank" rel="noopener noreferrer" class="link-item" id="link-github">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-              </svg>
-              <span>GitHub</span>
-            </a>
-            <a href="https://github.com/naz0914/0916#readme" target="_blank" rel="noopener noreferrer" class="link-item" id="link-readme">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-              </svg>
-              <span>README.md</span>
-            </a>
-            <a href="mailto:hello@example.com" class="link-item" id="link-email">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <span>Contact</span>
-            </a>
-            <button class="link-item btn-link" id="copy-time-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-              <span id="copy-btn-text">Copy Time</span>
-            </button>
+
+          <!-- Project 2 -->
+          <div class="project-item-card featured-border">
+            <div class="project-header">
+              <div class="project-title-group">
+                <div class="badge-row">
+                  <span class="project-badge green">創新醫材研發</span>
+                  <span class="award-pill">🏆 BEST OF THE BEST 獲獎</span>
+                </div>
+                <h3>HeartPod 醫療器材開發 <span class="sub-proj-name">(B.E.S.T. 創新計畫)</span></h3>
+              </div>
+              <a href="https://github.com/naz0914/0916" target="_blank" rel="noopener noreferrer" class="proj-link-icon" title="專案詳情">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            </div>
+
+            <p class="project-desc">
+              跨領域合作設計用於<strong>左心耳封堵 (LAA closure)</strong> 的新型醫療器材原型，策劃產品法規、臨床驗證與健保給付策略，並榮獲該創新計畫 <strong>BEST OF THE BEST</strong> 殊榮。
+            </p>
+
+            <div class="project-tech-bar">
+              <span class="tech-tag">醫材原型設計</span>
+              <span class="tech-tag">法規分析</span>
+              <span class="tech-tag">產品市場策略</span>
+              <span class="tech-tag">LAA Closure</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Footer Info -->
-      <footer class="portal-footer">
-        <p>Personal Portal • Real-Time Engine</p>
+      <!-- Footer -->
+      <footer class="portal-footer glass-panel">
+        <p>© 2026 <strong>陳沐德 (德哥)</strong> • 國立中興大學 生醫工程研究所</p>
+        <p class="footer-sub">數位 IC 設計 • 生醫感測器開發 • 機器學習應用</p>
       </footer>
     </main>
   </div>
 
-  <!-- Name Edit Modal / Prompt Overlay -->
-  <div id="edit-modal" class="modal-overlay hidden" aria-hidden="true">
-    <div class="modal-box glass-card">
-      <h2 id="modal-title">Customize Your Identity</h2>
-      <p class="modal-subtitle">Enter your name and details to personalize this page.</p>
-
-      <div class="form-group">
-        <label for="input-name">Your Full Name</label>
-        <input type="text" id="input-name" placeholder="e.g., Alex Morgan" maxlength="40" autocomplete="off">
-      </div>
-
-      <div class="form-group">
-        <label for="input-role">Title / Role</label>
-        <input type="text" id="input-role" placeholder="e.g., Software Engineer & Explorer" maxlength="50" autocomplete="off">
-      </div>
-
-      <div class="modal-actions">
-        <button id="modal-cancel-btn" class="glass-btn secondary">Cancel</button>
-        <button id="modal-save-btn" class="glass-btn primary">Save Identity</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
