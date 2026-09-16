@@ -6,6 +6,8 @@ A sleek, responsive personal dashboard featuring real-time clock updates, time-o
 
 👉 **[https://naz0914.github.io/0916/](https://naz0914.github.io/0916/)**
 
+![個人網頁預覽](./螢幕擷取畫面%202026-09-16%20110500.png)
+
 ## Features
 
 - **Live Real-Time Clock**: High-precision ticking clock displaying HH:MM:SS with 12H/24H mode toggle.
